@@ -1,4 +1,5 @@
 from BeautifulSoup import BeautifulSoup
+from datetime import datetime
 import requests
 
 SOURCE = 'http://www.polioeradication.org/Dataandmonitoring/Poliothisweek.aspx'
@@ -14,6 +15,10 @@ def parsepage(text):
 def main():
     r = requests.get(SOURCE)
     countries = parsepage(r.text)
+    d = {}
+    for country, date in countries:
+        d[country] = datetime.strptime(date, '%d-%b-%y')
+    print d
     
 if __name__ == '__main__':
     main()
