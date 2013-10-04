@@ -32,7 +32,7 @@ def main():
     countries = parsepage(r.text)
     dates = filter(None, (parsedate(d) for (c, d) in countries))
     diff = date.today() - max(dates).date()
-    stats.ez_post_value("site-stathat.com@ars.iki.fi", "days since last case", diff.days)
+    stats.ez_post_value("site-stathat.com@ars.iki.fi", "time since last case", diff.days)
     
 if __name__ == '__main__':
     main()
