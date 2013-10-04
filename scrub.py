@@ -33,7 +33,6 @@ def main():
     dates = filter(None, (parsedate(d) for (c, d) in countries))
     diff = date.today() - max(dates).date()
     stats.ez_post_value("site-stathat.com@ars.iki.fi", "days since last case", diff.days)
-    print date.today(), diff.days
     
 if __name__ == '__main__':
     main()
