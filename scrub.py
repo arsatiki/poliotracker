@@ -1,9 +1,9 @@
 from BeautifulSoup import BeautifulSoup
 from datetime import datetime, date
-import requests
 from stathat import StatHat
+from fetcher import fetch
+import sys
 
-SOURCE = 'http://www.polioeradication.org/Dataandmonitoring/Poliothisweek.aspx'
 
 def parsepage(text):
     doc = BeautifulSoup(text, convertEntities="html")
@@ -27,9 +27,12 @@ def parsedate(d):
     return None
 
 def main():
+    text, modified = fetch()
+    if not modified:
+        sys.exit()
+        
     stats = StatHat()
-    r = requests.get(SOURCE)
-    countries = parsepage(r.text)
+    countries = parsepage(text)
     dates = filter(None, (parsedate(d) for (c, d) in countries))
     diff = date.today() - max(dates).date()
     stats.ez_post_value("site-stathat.com@ars.iki.fi", "time since last case", diff.days)
