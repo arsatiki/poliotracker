@@ -4,6 +4,7 @@ from stathat import StatHat
 from fetcher import fetch
 import sys
 
+NO_UPLOAD = False
 
 def parsepage(text):
     doc = BeautifulSoup(text, convertEntities="html")
@@ -26,16 +27,26 @@ def parsedate(d):
             continue
     return None
 
+def publish(name, value):
+    if NO_UPLOAD:
+        print name, value
+    else:
+        stats = StatHat()
+        stats.ez_post_value("site-stathat.com@ars.iki.fi", name, value)
+    
+
 def main():
     text, modified = fetch()
     if not modified:
         sys.exit()
+    
+    if len(sys.argv) > 1 and sys.argv[1] = '-n':
+        NO_UPLOAD = True
         
-    stats = StatHat()
     countries = parsepage(text)
     dates = filter(None, (parsedate(d) for (c, d) in countries))
     diff = date.today() - max(dates).date()
-    stats.ez_post_value("site-stathat.com@ars.iki.fi", "time since last case", diff.days)
+    publish("time since last case", diff.days)
     
 if __name__ == '__main__':
     main()
