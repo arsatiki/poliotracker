@@ -3,6 +3,7 @@ from datetime import datetime, date
 from stathat import StatHat
 from fetcher import fetch
 import sys
+import time
 
 NO_UPLOAD = False
 FORCE_FETCH = False
@@ -38,12 +39,17 @@ def parsedate(d):
             continue
     return None
 
-def publish(name, value):
+def publish(name, value, last_year=False):
+    timestamp = None
+    if last_year:
+        timestamp = int(time.time()) - 365 * 24 * 60 * 60
+
     if NO_UPLOAD:
-        print name, value
-    else:
-        stats = StatHat()
-        stats.ez_post_value("site-stathat.com@ars.iki.fi", name, value)
+        print name, value, timestamp
+        return
+
+    stats = StatHat()
+    stats.ez_post_value("site-stathat.com@ars.iki.fi", name, value, timestamp)
 
 def parse_opts():
     global NO_UPLOAD, FORCE_FETCH
@@ -71,10 +77,14 @@ def main():
     publish("time since last case", diff.days)
     
     this_year, last_year = find_counts(doc)
-    publish("cases globally this year", this_year[0])
-    publish("cases in endemic countries this year", this_year[1])
-    publish("cases globally last year", last_year[0])
-    publish("cases in endemic countries last year", last_year[1])
+    publish("cases globally", this_year[0])
+    publish("cases in endemic countries", this_year[1])
+    publish("cases in non-endemic countries", this_year[2])
+    
+    publish("cases globally", last_year[0], last_year=True)
+    publish("cases in endemic countries", last_year[1], last_year=True)
+    publish("cases in non-endemic countries", last_year[2], last_year=True)
+
     
 if __name__ == '__main__':
     main()
