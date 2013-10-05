@@ -5,6 +5,7 @@ from fetcher import fetch
 import sys
 
 NO_UPLOAD = False
+FORCE_FETCH = False
 
 def parsepage(text):
     doc = BeautifulSoup(text, convertEntities="html")
@@ -33,15 +34,22 @@ def publish(name, value):
     else:
         stats = StatHat()
         stats.ez_post_value("site-stathat.com@ars.iki.fi", name, value)
-    
+
+def parse_opts():
+    global NO_UPLOAD, FORCE_FETCH
+    if len(sys.argv) > 1:
+        for opt in sys.argv[1:]:
+            if opt == '-n':
+                NO_UPLOAD = True
+            if opt == '-f':
+                FORCE_FETCH = True
 
 def main():
+    parse_opts()
+
     text, modified = fetch()
-    if not modified:
+    if not (modified or FORCE_FETCH):
         sys.exit()
-    
-    if len(sys.argv) > 1 and sys.argv[1] == '-n':
-        NO_UPLOAD = True
         
     countries = parsepage(text)
     dates = filter(None, (parsedate(d) for (c, d) in countries))
