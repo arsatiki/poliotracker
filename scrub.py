@@ -40,7 +40,7 @@ def main():
     if not modified:
         sys.exit()
     
-    if len(sys.argv) > 1 and sys.argv[1] = '-n':
+    if len(sys.argv) > 1 and sys.argv[1] == '-n':
         NO_UPLOAD = True
         
     countries = parsepage(text)
