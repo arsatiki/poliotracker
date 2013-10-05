@@ -59,14 +59,16 @@ def main():
 
     text, modified = fetch()
     if not (modified or FORCE_FETCH):
+        print "Not modified, skipping"
         sys.exit()
     
+    print "Sending results"
     doc = BeautifulSoup(text, convertEntities="html")
     
     countries = find_countries(doc)
     dates = filter(None, (parsedate(d) for (c, d) in countries))
     diff = date.today() - max(dates).date()
-    #publish("time since last case", diff.days)
+    publish("time since last case", diff.days)
     
     this_year, last_year = find_counts(doc)
     publish("cases globally this year", this_year[0])
