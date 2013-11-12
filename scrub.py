@@ -1,11 +1,9 @@
 from BeautifulSoup import BeautifulSoup
 from datetime import datetime, date
-from stathat import StatHat
 from fetcher import fetch
 import sys
 import time
 
-NO_UPLOAD = False
 FORCE_FETCH = False
 
 def find_countries(doc):
@@ -39,24 +37,20 @@ def parsedate(d):
             continue
     return None
 
-def publish(name, value, last_year=False):
-    timestamp = None
+def publish(endemic, non_endemic, days_since_last=None, last_year=False):
+    timestamp = int(time.time())
     if last_year:
-        timestamp = int(time.time()) - 365 * 24 * 60 * 60
+        timestamp -= 365 * 24 * 60 * 60
 
-    if NO_UPLOAD:
-        print name, value, timestamp
-        return
-
-    stats = StatHat()
-    stats.ez_post_value("site-stathat.com@ars.iki.fi", name, value, timestamp)
+    if days_since_last is not None:
+        print "%d\t%d\t%d\t%d" % (timestamp, endemic, non_endemic, days_since_last)
+    else:
+        print "%d\t%d\t%d\tNaN" % (timestamp, endemic, non_endemic)
 
 def parse_opts():
     global NO_UPLOAD, FORCE_FETCH
     if len(sys.argv) > 1:
         for opt in sys.argv[1:]:
-            if opt == '-n':
-                NO_UPLOAD = True
             if opt == '-f':
                 FORCE_FETCH = True
 
@@ -68,23 +62,15 @@ def main():
         print "Not modified, skipping"
         sys.exit()
     
-    print "Sending results"
     doc = BeautifulSoup(text, convertEntities="html")
     
     countries = find_countries(doc)
     dates = filter(None, (parsedate(d) for (c, d) in countries))
     diff = date.today() - max(dates).date()
-    publish("time since last case", diff.days)
     
     this_year, last_year = find_counts(doc)
-    publish("cases globally", this_year[0])
-    publish("cases in endemic countries", this_year[1])
-    publish("cases in non-endemic countries", this_year[2])
-    
-    publish("cases globally", last_year[0], last_year=True)
-    publish("cases in endemic countries", last_year[1], last_year=True)
-    publish("cases in non-endemic countries", last_year[2], last_year=True)
-
+    publish(this_year[1], this_year[2], days_since_last=diff.days)
+    publish(last_year[1], last_year[2], last_year=True)
     
 if __name__ == '__main__':
     main()
