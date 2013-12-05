@@ -37,8 +37,12 @@ def parse_cases(data, out):
 def parse_countries(data, out):
     rows = list(data)
     for r in rows[:-3]:
-        out.writerow((LAST_YEAR, r['Country'], r['Total-py2d']))
-        out.writerow((TODAY, r['Country'], r['Total-cy2d']))
+        past_total = r['Total-py2d']
+        curr_total = r['Total-cy2d']
+        if past_total:
+            out.writerow((LAST_YEAR, r['Country'], past_total))
+        if curr_total:
+            out.writerow((TODAY, r['Country'], curr_total))
 
 def main():
     if len(sys.argv) != 2:
