@@ -1,4 +1,4 @@
-all: summary.tsv days.tsv country-history.tsv
+all: cases.tsv days-since.tsv country-history.tsv
 
 cases.tsv: latest-week.tsv
 	python parse.py cases < $< >> $@
