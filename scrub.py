@@ -6,11 +6,15 @@ import requests
 
 SOURCE = 'http://www.polioeradication.org/Dataandmonitoring/Poliothisweek.aspx'
 
+def text(element):
+    textnodes = element.findAll(text=True)
+    return ''.join(textnodes)
+
 def write(doc, w):
     casetable = doc.findAll('table')[1]
     countries = casetable.findAll('tr')[2:]
     for country in countries:
-        cells = (c.text for c in country.findAll('td'))
+        cells = (text(c) for c in country.findAll('td'))
         cleaned = (c.strip() for c in cells)
         row = [c.encode('utf-8') for c in cleaned]
         w.writerow(row)

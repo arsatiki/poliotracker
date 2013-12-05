@@ -6,6 +6,7 @@ import sys
 
 UNCLEAN = re.compile(r'[^-A-Za-z0-9]')
 
+# TODO: these should be scraped out of the data as well.
 TODAY = str(date.today())
 LAST_YEAR = str(date.today() - timedelta(days=365))
 
