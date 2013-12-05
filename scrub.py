@@ -1,10 +1,7 @@
-from BeautifulSoup import BeautifulSoup
 from datetime import datetime, date
-from fetcher import fetch
+import csv
 import sys
 import time
-
-FORCE_FETCH = False
 
 def find_countries(doc):
     casetable = doc.findAll('table')[1]
@@ -47,23 +44,8 @@ def publish(endemic, non_endemic, days_since_last=None, last_year=False):
     else:
         print "%d\t%d\t%d\tNaN" % (timestamp, endemic, non_endemic)
 
-def parse_opts():
-    global NO_UPLOAD, FORCE_FETCH
-    if len(sys.argv) > 1:
-        for opt in sys.argv[1:]:
-            if opt == '-f':
-                FORCE_FETCH = True
 
 def main():
-    parse_opts()
-
-    text, modified = fetch()
-    if not (modified or FORCE_FETCH):
-        print "Not modified, skipping"
-        sys.exit()
-    
-    doc = BeautifulSoup(text, convertEntities="html")
-    
     countries = find_countries(doc)
     dates = filter(None, (parsedate(d) for (c, d) in countries))
     diff = date.today() - max(dates).date()
