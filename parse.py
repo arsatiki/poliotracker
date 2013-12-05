@@ -20,7 +20,7 @@ def parsedate(d):
             continue
     return None
 
-def days(data, out):
+def parse_days(data, out):
     rows = list(data)
     country_rows = rows[:-3]
     datestrings = (row['Date of most recent'] for row in country_rows)
@@ -29,39 +29,33 @@ def days(data, out):
     diff = date.today() - max(dates).date()
     out.writerow((TODAY, diff.days))
 
-def cases(data, out):
+def parse_cases(data, out):
     row = list(data)
     endemic, outbreak = row[-2], row[-1]
     out.writerow((LAST_YEAR, endemic['Total-py2d'], outbreak['Total-py2d']))
     out.writerow((TODAY, endemic['Total-cy2d'], outbreak['Total-cy2d']))
 
-def countries(data, out):
+def parse_countries(data, out):
     rows = list(data)
     for r in rows[:-3]:
         out.writerow((LAST_YEAR, r['Country'], r['Total-py2d']))
         out.writerow((TODAY, r['Country'], r['Total-cy2d']))
-
-PARSER = {
-    'days': days,
-    'cases': cases,
-    'countries': countries
-}
 
 def main():
     if len(sys.argv) != 2:
         print >> sys.stdout, "Expected parse command" 
         sys.exit(1)
     
-    subcommand = sys.argv[1]
+    parser = globals().get('parse_%s' % sys.argv[1], None)
     
-    if subcommand not in PARSER:
-        print >> sys.stdout, "Incorrect parse command:", subcommand
+    if parser is None:
+        print >> sys.stdout, "Incorrect parse command:", sys.argv[1]
         sys.exit(1)
     
     data = csv.DictReader(sys.stdin, delimiter='\t')
     out = csv.writer(sys.stdout, delimiter='\t')
     
-    PARSER[subcommand](data, out)
+    parser(data, out)
     
 if __name__ == '__main__':
     main()
