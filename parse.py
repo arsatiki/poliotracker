@@ -3,7 +3,6 @@ import csv
 from itertools import islice, imap, ifilter
 import re
 import sys
-import time
 
 UNCLEAN = re.compile(r'[^-A-Za-z0-9]')
 
