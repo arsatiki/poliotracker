@@ -35,10 +35,16 @@ def cases(data, out):
     out.writerow((LAST_YEAR, endemic['Total-py2d'], outbreak['Total-py2d']))
     out.writerow((TODAY, endemic['Total-cy2d'], outbreak['Total-cy2d']))
 
+def countries(data, out):
+    rows = list(data)
+    for r in rows[:-3]:
+        out.writerow((LAST_YEAR, r['Country'], r['Total-py2d']))
+        out.writerow((TODAY, r['Country'], r['Total-cy2d']))
+
 PARSER = {
     'days': days,
     'cases': cases,
-    #'countries': countries
+    'countries': countries
 }
 
 def main():
