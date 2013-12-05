@@ -9,7 +9,10 @@ days-since.tsv: latest-week.tsv
 country-history.tsv: latest-week.tsv
 	python parse.py countries < $< >> $@
 
-latest-week.tsv:
-	python scrub.py > $@
+latest-week.tsv: FORCE
+	python scrub.py > $@.temp
+	cmp -s $@ $@.temp && rm $@.temp || mv $@.temp $@
+
+FORCE:
 
 .PHONY: all
