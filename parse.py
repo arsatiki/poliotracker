@@ -8,7 +8,6 @@ UNCLEAN = re.compile(r'[^-A-Za-z0-9]')
 
 # TODO: these should be scraped out of the data as well.
 TODAY = str(date.today())
-LAST_YEAR = str(date.today() - timedelta(days=365))
 
 def parsedate(d):
     d = UNCLEAN.sub('', d)
@@ -32,7 +31,6 @@ def parse_days(data, out):
 def parse_cases(data, out):
     row = list(data)
     endemic, outbreak = row[-2], row[-1]
-    out.writerow((LAST_YEAR, endemic['Total-py2d'], outbreak['Total-py2d']))
     out.writerow((TODAY, endemic['Total-cy2d'], outbreak['Total-cy2d']))
 
 def parse_countries(data, out):
