@@ -24,8 +24,8 @@ def main():
     doc = BeautifulSoup(r.text, convertEntities="html")
     w = csv.writer(sys.stdout, delimiter="\t")
     #TODO: Move this out.
-    header = ("Country", "WPV1-cy2d", "WPV3-cy2d", "W1W3-cy2d", "Total-cy2d",
-                         "WPV1-py2d", "WPV3-py2d", "W1W3-py2d", "Total-py2d",
+    header = ("Country", "WPV1-cy2d", "WPV3-cy2d", "Total-cy2d",
+                         "WPV1-py2d", "WPV3-py2d", "Total-py2d",
                          "Total-pyf", "Date of most recent")
     w.writerow(header)
     write(doc, w)
