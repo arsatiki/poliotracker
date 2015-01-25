@@ -12,7 +12,7 @@ def text(element):
 
 def write(doc, w):
     casetable = doc.findAll('table')[1]
-    countries = casetable.findAll('tr')[2:]
+    countries = casetable.findAll('tr')[1:]
     for country in countries:
         cells = (text(c) for c in country.findAll('td'))
         cleaned = (c.strip() for c in cells)
@@ -24,9 +24,7 @@ def main():
     doc = BeautifulSoup(r.text, convertEntities="html")
     w = csv.writer(sys.stdout, delimiter="\t")
     #TODO: Move this out.
-    header = ("Country", "WPV1-cy2d", "WPV3-cy2d", "Total-cy2d",
-                         "WPV1-py2d", "WPV3-py2d", "Total-py2d",
-                         "Total-pyf", "Date of most recent")
+    header = ("Country", "Total-cy2d", "Total-py2d", "Total-pyf", "Date of most recent")
     w.writerow(header)
     write(doc, w)
     
