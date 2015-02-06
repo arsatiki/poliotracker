@@ -22,7 +22,7 @@ def parsedate(d):
 def parse_days(data, out):
     rows = list(data)
     country_rows = rows[:-3]
-    datestrings = (row['Date of most recent'] for row in country_rows)
+    datestrings = (row['Date of most recent WPV'] for row in country_rows)
     dates = ifilter(None, imap(parsedate, datestrings))
 
     diff = date.today() - max(dates).date()
@@ -31,12 +31,13 @@ def parse_days(data, out):
 def parse_cases(data, out):
     row = list(data)
     endemic, outbreak = row[-2], row[-1]
-    out.writerow((TODAY, endemic['Total-cy2d'], outbreak['Total-cy2d']))
+    out.writerow((TODAY, endemic['Total-cy2d-wpv'],
+                         outbreak['Total-cy2d-wpv']))
 
 def parse_countries(data, out):
     rows = list(data)
     for r in rows[:-3]:
-        curr_total = r['Total-cy2d']
+        curr_total = r['Total-cy2d-wpv']
         if curr_total:
             out.writerow((TODAY, r['Country'], curr_total))
 
