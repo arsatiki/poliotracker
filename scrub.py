@@ -10,13 +10,26 @@ def text(element):
     textnodes = element.findAll(text=True)
     return ''.join(textnodes)
 
+def rowify(rows):
+    for r in rows:
+        cells = (text(c) for c in r.findAll('td'))
+        cleaned = (c.strip() for c in cells)
+        yield [c.encode('utf-8') for c in cleaned]
+
 def write(doc, w):
     casetable = doc.findAll('table')[1]
     countries = casetable.findAll('tr')[2:]
-    for country in countries:
-        cells = (text(c) for c in country.findAll('td'))
-        cleaned = (c.strip() for c in cells)
-        row = [c.encode('utf-8') for c in cleaned]
+    for row in rowify(countries):
+        w.writerow(row)
+
+def write_endemics(doc, w):
+    casetable = doc.findAll('table')[0]
+    totals = casetable.findAll('tr')[-2:]
+    rows = list(rowify(totals))
+    rows[0][0] = 'Endemic'
+    rows[1][0] = 'Non-endemic'
+
+    for row in rows:
         w.writerow(row)
 
 def main():
@@ -31,6 +44,7 @@ def main():
                         "Date of most recent cVDPV")
     w.writerow(header)
     write(doc, w)
+    write_endemics(doc, w)
     
 if __name__ == "__main__":
     main()

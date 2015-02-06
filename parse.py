@@ -21,7 +21,7 @@ def parsedate(d):
 
 def parse_days(data, out):
     rows = list(data)
-    country_rows = rows[:-3]
+    country_rows = rows[:-2]
     datestrings = (row['Date of most recent WPV'] for row in country_rows)
     dates = ifilter(None, imap(parsedate, datestrings))
 
@@ -36,7 +36,7 @@ def parse_cases(data, out):
 
 def parse_countries(data, out):
     rows = list(data)
-    for r in rows[:-3]:
+    for r in rows[:-2]:
         curr_total = r['Total-cy2d-wpv']
         if curr_total:
             out.writerow((TODAY, r['Country'], curr_total))
