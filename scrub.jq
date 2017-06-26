@@ -1,5 +1,5 @@
 def events: .features|map(.attributes);
-def ms_to_date: (./1000)|todateiso8601 ;
+def ms_to_date: (./1000)|strftime("%Y-%m-%d");
 def get_year: (.PeriodStartDate/1000)|gmtime|.[0];
 
 def select_case($code):
