@@ -12,7 +12,7 @@ country-history.tsv: latest-week.tsv
 	python parse.py countries < $< >> $@
 
 latest-week.tsv: FORCE
-	curl -s "${URL}" | ../src/helb/jq --argjson current_year 2017 -rf scrub.jq > $@.temp
+	curl -s "${URL}" | ../src/helb/jq --argjson current_year 2019 -rf scrub.jq > $@.temp
 	cmp -s $@ $@.temp && rm $@.temp || mv $@.temp $@
 
 FORCE:
