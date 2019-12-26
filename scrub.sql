@@ -1,8 +1,8 @@
-CREATE TABLE #data_staging (
+CREATE TEMPORARY TABLE polio_data_staging (
     data jsonb
 );
 
-\copy #data_staging FROM 'data.json';
+\copy polio_data_staging FROM 'data.json';
 
 create or replace view polio.latest_event_ts as (
 	select country, max(ts) as max_ts
@@ -16,7 +16,7 @@ with stream as (
 		date(to_timestamp("PeriodEndDate"/1000) at time zone 'utc')
 		as ts
 	from 
-		#data_staging,
+		polio_data_staging,
 		jsonb_array_elements(data->'features') as r,
 		jsonb_to_record(r.value->'attributes')
 			AS event("Admin0" text, "IndicatorCode" text, "PeriodEndDate" bigint, "PeriodStartDate" bigint)
