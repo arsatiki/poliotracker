@@ -1,20 +1,14 @@
 URL=https://extranet.who.int/maps/rest/services/POLIOWEBSITE/Poliowebsite_layers/MapServer/0/query?where=1%3D1&outFields=Admin0%2C+IndicatorCode%2C+PeriodStartDate%2C+PeriodEndDate&returnGeometry=false&f=json
 
-all: cases.tsv days-since.tsv country-history.tsv
+all: db-update
 
-cases.tsv: latest-week.tsv
-	python parse.py cases < $< >> $@
+db-update: scrub.sql data.json
+	psql -b -q -f scrub.sql --single-transaction
 
-days-since.tsv: latest-week.tsv
-	python parse.py days < $< >> $@
-
-country-history.tsv: latest-week.tsv
-	python parse.py countries < $< >> $@
-
-latest-week.tsv: FORCE
-	curl -s "${URL}" | ../src/helb/jq --argjson current_year 2019 -rf scrub.jq > $@.temp
+data.json: FORCE
+	curl -s "${URL}" > $@.temp
 	cmp -s $@ $@.temp && rm $@.temp || mv $@.temp $@
 
 FORCE:
 
-.PHONY: all
+.PHONY: all db-update

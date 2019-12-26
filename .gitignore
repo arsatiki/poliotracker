@@ -1,2 +1,4 @@
 checksum
 *.py[oc]
+data.json
+data.json.temp
