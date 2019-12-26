@@ -56,6 +56,6 @@ SELECT
 FROM
     polio.events
 WHERE
-    ts >= '2016-01-17'
+    ts >= '2015-01-03'
 ;
 
