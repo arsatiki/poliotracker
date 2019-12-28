@@ -31,31 +31,21 @@ where
 	ts > max_ts
 ;
 
-CREATE or replace VIEW polio.history_events AS
-SELECT
-    d - interval '3 weeks' AS ts,
-    country,
-    cases - lag(cases) OVER (PARTITION BY lower(country) ORDER BY d) AS events
-FROM
-    polio.country_history;
-
 CREATE OR REPLACE VIEW polio.combined_events AS
     SELECT
         ts,
         initcap(country) AS country,
         events
     FROM
-        polio.history_events
-    WHERE (ts < '2015-01-03' OR ts BETWEEN '2017-08-11' AND '2018-01-01')
-        AND events > 0
-UNION ALL
-SELECT
-    ts,
-    initcap(country),
-    1 AS events
-FROM
-    polio.events
-WHERE
-    ts >= '2015-01-03'
+        polio.manual_history_events
+
+    UNION ALL
+
+    SELECT
+        ts,
+        initcap(country),
+        1 AS events
+    FROM
+        polio.events
 ;
 
